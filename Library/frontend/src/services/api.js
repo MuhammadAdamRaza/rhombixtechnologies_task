@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 // 1. Get the URL dynamically from the environment variable
-const BASE_URL = import.meta.env.VITE_API_URL || '/api';
-
+//const BASE_URL = import.meta.env.VITE_API_URL || '/api';
+const BASE_URL = 'https://rhombixtechnologies-task-5q2f.vercel.app/api';
 const api = axios.create({
     baseURL: BASE_URL,
     headers: {
