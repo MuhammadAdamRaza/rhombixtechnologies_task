@@ -1,13 +1,10 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://rhombixtechnologies-task-5q2f.vercel.app/api';
-
-// --- FIX 1: You must create the 'api' instance before using it ---
 const api = axios.create({
-    baseURL: BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
+    // Use relative path '/api'. 
+    // In Dev: Vite proxy handles it. 
+    // In Prod: Flask serves it directly.
+    baseURL: '/api',
 });
 
 // Request Interceptor: Attach access token
@@ -32,8 +29,8 @@ api.interceptors.response.use(
                 const refreshToken = localStorage.getItem('refresh_token');
                 if (!refreshToken) throw new Error("No refresh token");
 
-                // --- FIX 2: Added 'BASE_URL' here so it doesn't return 404 ---
-                const res = await axios.post(`${BASE_URL}/auth/refresh`, {}, {
+                // Use the same base URL logic or relative path
+                const res = await axios.post('/auth/refresh', {}, {
                     headers: { Authorization: `Bearer ${refreshToken}` }
                 });
 
@@ -54,4 +51,3 @@ api.interceptors.response.use(
 );
 
 export default api;
-
