@@ -6,7 +6,7 @@ import math
 from mutagen.mp3 import MP3
 from mutagen.id3 import ID3, APIC, TIT2, TPE1, TALB
 
-# 1. Setup paths
+# 1. Setup pathS
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MUSIC_DIR = os.path.join(BASE_DIR, 'music')
 
@@ -15,17 +15,14 @@ BUILD_DIR = os.path.join(BASE_DIR, 'build')
 if not os.path.exists(MUSIC_DIR):
     os.makedirs(MUSIC_DIR)
 
-# Initialize Flask with the correct static folder
 app = Flask(__name__, static_folder=BUILD_DIR)
 CORS(app)
 
-# 2. Helper: Format seconds into M:SS
 def format_duration(seconds):
     minutes = math.floor(seconds / 60)
     secs = math.floor(seconds % 60)
     return f"{minutes}:{secs:02d}"
 
-# 3. Helper: Extract Metadata from a single file
 def get_file_metadata(filename):
     filepath = os.path.join(MUSIC_DIR, filename)
     
@@ -39,17 +36,13 @@ def get_file_metadata(filename):
     try:
         audio = MP3(filepath, ID3=ID3)
         
-        # Get Duration
         if audio.info:
             duration_str = format_duration(audio.info.length)
 
-        # Get ID3 Tags (Title, Artist, Album)
         if audio.tags:
             if 'TIT2' in audio.tags: title = str(audio.tags['TIT2'])
             if 'TPE1' in audio.tags: artist = str(audio.tags['TPE1'])
             if 'TALB' in audio.tags: album = str(audio.tags['TALB'])
-            
-            # Check if embedded cover art exists (APIC frame)
             for key in audio.tags.keys():
                 if key.startswith('APIC:'):
                     has_cover = True
@@ -58,7 +51,6 @@ def get_file_metadata(filename):
     except Exception as e:
         print(f"Error reading {filename}: {e}")
 
-    # Determine Cover URL
     if has_cover:
         cover_url = f"/api/cover/{filename}"
     else:
@@ -80,12 +72,11 @@ def get_file_metadata(filename):
 def get_music():
     playlist = []
     
-    # Add Demos (Optional)
     playlist.extend([
         {
             "id": "demo1", "title": "Techno Dream", "artist": "SoundHelix", "category": "Electronic", "album": "Digital Horizons", "duration": "5:30",
             "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-            "cover": None # Will show default art
+            "cover": None 
         }
     ])
 
@@ -99,7 +90,7 @@ def get_music():
 
     return jsonify(playlist)
 
-# 5. API: Serve Embedded Album Art
+# API: Serve Embedded Album Art
 @app.route('/api/cover/<path:filename>')
 def get_cover(filename):
     filepath = os.path.join(MUSIC_DIR, filename)
@@ -115,12 +106,12 @@ def get_cover(filename):
     
     return "No Cover Found", 404
 
-# 6. API: Categories
+# API: Categories
 @app.route('/api/categories', methods=['GET'])
 def get_categories():
     return jsonify(["My Library", "Electronic", "Classical", "Pop", "Rock"])
 
-# 7. File Server: Stream Audio
+#  File Server: Stream Audio
 @app.route('/music/<path:filename>')
 def serve_music(filename):
     return send_from_directory(MUSIC_DIR, filename)
