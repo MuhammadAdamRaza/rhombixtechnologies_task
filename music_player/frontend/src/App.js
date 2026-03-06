@@ -1,8 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './App.css';
-
-// If running 'npm start' (Development), it uses localhost:5000
-// If running via Flask (Production), it uses the current domain (relative path)
 const API_BASE_URL = process.env.NODE_ENV === 'development' ? 'http://localhost:5000' : '';
 
 function App() {
