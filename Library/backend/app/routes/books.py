@@ -3,6 +3,7 @@ import requests
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from datetime import datetime, timedelta
+from sqlalchemy.orm import joinedload
 
 from ..models import db, Book, History
 from .. import mail
@@ -142,16 +143,18 @@ def return_book():
 @books_bp.route('/bookshelf', methods=['GET'])
 @jwt_required()
 def get_bookshelf():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     history = (
-        History.query.filter_by(user_id=user_id, return_date=None)
+        History.query.options(joinedload(History.book))
+        .filter(History.user_id == user_id, History.return_date.is_(None))
         .order_by(History.borrow_date.desc())
         .all()
     )
 
     return jsonify([
         {
-            **record.to_dict(),
+            "id": record.id,
+            "due_date": record.due_date.isoformat(),
             "title": record.book.title if record.book else "Unknown Title (Deleted)",
             "author": record.book.author if record.book else "Unknown Author",
             "cover_url": record.book.cover_url if record.book else None,
