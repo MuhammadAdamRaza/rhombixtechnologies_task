@@ -7,6 +7,8 @@ const History = () => {
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
+    const [historyError, setHistoryError] = useState('');
+    const [retryCount, setRetryCount] = useState(0);
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
@@ -14,20 +16,27 @@ const History = () => {
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
             try {
-                const userRes = await api.get('/auth/me');
+                const [userRes, historyRes] = await Promise.all([
+                    api.get('/auth/me'),
+                    api.get('/books/history')
+                ]);
+                if (!Array.isArray(historyRes.data)) {
+                    throw new Error('The borrowing history response was not a list.');
+                }
                 setUser(userRes.data);
-
-                const res = await api.get('/books/history');
-                setHistory(res.data);
+                setHistory(historyRes.data);
+                setHistoryError('');
             } catch (err) {
                 console.error("Failed to fetch borrow records", err);
+                setHistoryError(err.response?.data?.message || 'Please try again in a moment.');
             } finally {
                 setLoading(false);
             }
         };
         fetchData();
-    }, []);
+    }, [retryCount]);
 
     const handleReturn = async (id) => {
         try {
@@ -170,7 +179,20 @@ const History = () => {
                     })}
                 </div>
 
-                {history.length === 0 && (
+                {historyError ? (
+                    <div className="history-empty-state">
+                        <AlertCircle size={30} color="var(--danger)" />
+                        <p>Unable to load borrowing history.</p>
+                        <span>{historyError}</span>
+                        <button
+                            type="button"
+                            className="btn-primary"
+                            onClick={() => setRetryCount(count => count + 1)}
+                        >
+                            Try Again
+                        </button>
+                    </div>
+                ) : history.length === 0 && (
                     <div style={{ padding: '3.5rem 1rem', textAlign: 'center', color: 'var(--text-muted)' }}>
                         No loan records available at this time.
                     </div>
@@ -190,6 +212,22 @@ const History = () => {
             <style>{`
                 .desktop-table-view {
                     display: block;
+                }
+
+                .history-empty-state {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 0.75rem;
+                    padding: 3rem 1.25rem;
+                    color: var(--text-muted);
+                    text-align: center;
+                    overflow-wrap: anywhere;
+                }
+
+                .history-empty-state p {
+                    color: var(--text-main);
+                    font-weight: 600;
                 }
 
                 .mobile-cards-view {
@@ -276,6 +314,17 @@ const History = () => {
                         background: rgba(239, 68, 68, 0.1);
                         color: var(--danger);
                         border: 1px solid rgba(239, 68, 68, 0.25);
+                    }
+                }
+
+                @media (max-width: 420px) {
+                    .mobile-cards-view {
+                        padding: 0.65rem;
+                    }
+
+                    .card-dates-row {
+                        flex-direction: column;
+                        gap: 0.35rem;
                     }
                 }
             `}</style>

@@ -708,7 +708,7 @@ const Dashboard = ({ user }) => {
                     }
                 }
 
-                @media (max-width: 380px) {
+                @media (max-width: 520px) {
                     .dashboard-kpi-grid {
                         grid-template-columns: 1fr;
                     }
@@ -719,6 +719,12 @@ const Dashboard = ({ user }) => {
 
                     .book-cover-wrap {
                         height: 180px;
+                    }
+                }
+
+                @media (min-width: 769px) and (max-width: 1100px) {
+                    .bookshelf-grid {
+                        grid-template-columns: repeat(3, minmax(0, 1fr));
                     }
                 }
             `}</style>

@@ -166,14 +166,11 @@ def get_bookshelf():
 @books_bp.route('/history', methods=['GET'])
 @jwt_required()
 def get_user_history():
-    user_id = get_jwt_identity()
     is_admin = get_jwt().get('is_admin', False)
 
-    history = (
-        History.query.order_by(History.borrow_date.desc()).all()
-        if is_admin
-        else History.query.filter_by(user_id=user_id)
-        .order_by(History.borrow_date.desc()).all()
-    )
+    history_query = History.query.order_by(History.borrow_date.desc())
+    if not is_admin:
+        user_id = int(get_jwt_identity())
+        history_query = history_query.filter(History.user_id == user_id)
 
-    return jsonify([h.to_dict() for h in history])
+    return jsonify([record.to_dict() for record in history_query.all()])

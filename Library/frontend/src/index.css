@@ -238,9 +238,19 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .content {
   flex: 1;
   width: 100%;
+  min-width: 0;
   max-width: 1360px;
   margin: 0 auto;
   padding: 1.5rem 2rem;
+}
+
+.content > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+img {
+  max-width: 100%;
 }
 
 /* Loading Spinner */
@@ -327,6 +337,21 @@ table {
     padding: 9px 16px;
     font-size: 0.875rem;
   }
+
+  .dashboard-kpi-grid,
+  .dashboard-charts-grid,
+  .insights-grid,
+  .bookshelf-grid,
+  .books-grid,
+  .google-books-grid {
+    min-width: 0;
+  }
+
+  .bookshelf-grid > *,
+  .books-grid > *,
+  .google-books-grid > * {
+    min-width: 0;
+  }
 }
 
 @media (max-width: 480px) {
@@ -346,5 +371,13 @@ table {
   .input-field {
     font-size: 0.9rem;
     padding: 10px 14px;
+  }
+}
+
+@media (max-width: 520px) {
+  .bookshelf-grid,
+  .books-grid,
+  .google-books-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
   }
 }

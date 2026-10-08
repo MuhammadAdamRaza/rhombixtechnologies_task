@@ -366,7 +366,7 @@ const AdminGoogleBooks = () => {
                     }
                 }
 
-                @media (max-width: 380px) {
+                @media (max-width: 520px) {
                     .google-books-grid {
                         grid-template-columns: 1fr;
                     }

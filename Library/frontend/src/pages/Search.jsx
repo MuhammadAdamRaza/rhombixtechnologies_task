@@ -553,7 +553,7 @@ const Search = () => {
                     }
                 }
 
-                @media (max-width: 380px) {
+                @media (max-width: 520px) {
                     .books-grid {
                         grid-template-columns: 1fr;
                     }

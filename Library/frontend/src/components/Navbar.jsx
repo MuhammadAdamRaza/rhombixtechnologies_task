@@ -301,7 +301,7 @@ const Navbar = ({ user, setUser }) => {
                     display: none;
                 }
 
-                @media (max-width: 900px) {
+                @media (max-width: 1050px) {
                     .main-navbar {
                         margin: 0.75rem 0.75rem 0.25rem 0.75rem;
                         padding: 0.65rem 1rem;
