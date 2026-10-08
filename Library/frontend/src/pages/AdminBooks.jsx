@@ -19,10 +19,12 @@ const AdminBooks = () => {
     }, []);
 
     const fetchBooks = async () => {
+        setLoading(true);
         try {
             const res = await api.get('/admin/all-books');
             setBooks(res.data);
         } catch (err) {
+            console.error('Failed to retrieve book inventory', err);
             setMessage({ text: 'Failed to retrieve book inventory', type: 'error' });
         } finally {
             setLoading(false);
@@ -37,6 +39,7 @@ const AdminBooks = () => {
             setMessage({ text: `"${bookTitle}" removed from inventory`, type: 'success' });
             fetchBooks();
         } catch (err) {
+            console.error('Unable to delete title', err);
             setMessage({ text: err.response?.data?.message || 'Unable to delete title', type: 'error' });
         }
     };
@@ -57,6 +60,7 @@ const AdminBooks = () => {
             setEditingBook(null);
             fetchBooks();
         } catch (err) {
+            console.error('Failed to update book metadata', err);
             setMessage({ text: 'Failed to update record', type: 'error' });
         }
     };
@@ -76,6 +80,8 @@ const AdminBooks = () => {
     useEffect(() => {
         setCurrentPage(1);
     }, [searchTerm]);
+
+    if (loading) return <div className="loading">Loading library inventory...</div>;
 
     return (
         <div className="animate-fade admin-books-page" style={{ paddingBottom: '3rem' }}>
@@ -144,7 +150,7 @@ const AdminBooks = () => {
                 <div className="table-container desktop-books-table">
                     <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                         <thead>
-                            <tr style={{ background: 'rgba(255, 255, 255, 0.02)', borderBottom: '1px solid var(--glass-border)' }}>
+                            <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--glass-border)' }}>
                                 <th style={{ padding: '0.85rem 1.25rem', color: 'var(--text-muted)', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Cover</th>
                                 <th style={{ padding: '0.85rem 1.25rem', color: 'var(--text-muted)', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Title</th>
                                 <th style={{ padding: '0.85rem 1.25rem', color: 'var(--text-muted)', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Author</th>
@@ -214,7 +220,7 @@ const AdminBooks = () => {
                                                 disabled={!book.available}
                                                 style={{
                                                     padding: '4px 9px',
-                                                    background: book.available ? 'rgba(239, 68, 68, 0.1)' : 'rgba(255, 255, 255, 0.02)',
+                                                    background: book.available ? 'rgba(239, 68, 68, 0.1)' : '#f8fafc',
                                                     border: `1px solid ${book.available ? 'rgba(239, 68, 68, 0.3)' : 'var(--glass-border)'}`,
                                                     borderRadius: 'var(--radius-sm)',
                                                     color: book.available ? 'var(--danger)' : 'var(--text-dim)',
@@ -390,9 +396,9 @@ const AdminBooks = () => {
                 .modal-backdrop {
                     position: fixed;
                     inset: 0;
-                    background: rgba(0, 0, 0, 0.75);
-                    backdrop-filter: blur(8px);
-                    -webkit-backdrop-filter: blur(8px);
+                    background: rgba(23, 43, 77, 0.48);
+                    backdrop-filter: blur(4px);
+                    -webkit-backdrop-filter: blur(4px);
                     display: flex;
                     align-items: center;
                     justify-content: center;
@@ -438,7 +444,7 @@ const AdminBooks = () => {
                     .mobile-book-row {
                         display: flex;
                         gap: 0.75rem;
-                        background: rgba(255, 255, 255, 0.02);
+                        background: #f8fafc;
                         border: 1px solid var(--glass-border);
                         border-radius: var(--radius-sm);
                         padding: 0.75rem;

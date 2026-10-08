@@ -139,6 +139,27 @@ def return_book():
     return jsonify({"message": "Book returned successfully"})
 
 
+@books_bp.route('/bookshelf', methods=['GET'])
+@jwt_required()
+def get_bookshelf():
+    user_id = get_jwt_identity()
+    history = (
+        History.query.filter_by(user_id=user_id, return_date=None)
+        .order_by(History.borrow_date.desc())
+        .all()
+    )
+
+    return jsonify([
+        {
+            **record.to_dict(),
+            "title": record.book.title if record.book else "Unknown Title (Deleted)",
+            "author": record.book.author if record.book else "Unknown Author",
+            "cover_url": record.book.cover_url if record.book else None,
+        }
+        for record in history
+    ])
+
+
 @books_bp.route('/history', methods=['GET'])
 @jwt_required()
 def get_user_history():

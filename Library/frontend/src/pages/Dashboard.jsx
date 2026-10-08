@@ -8,11 +8,10 @@ import {
     ArrowRight, Book as BookIcon, CheckCircle2, Award, Calendar, BookCheck
 } from 'lucide-react';
 import api from '../services/api';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Pagination from '../components/Pagination';
 
-// Professional Executive Palette (No Purple or Blue)
-const PALETTE = ['#10b981', '#14b8a6', '#f59e0b', '#0d9488', '#ef4444', '#84cc16'];
+const PALETTE = ['#0f766e', '#1e3a5f', '#b7791f', '#3b8291', '#c2414e', '#4d8878'];
 
 const KpiCard = ({ icon, label, value, color }) => (
     <div className="glass-card kpi-card" style={{ borderLeft: `3px solid ${color}` }}>
@@ -32,10 +31,10 @@ const AdminDashboard = ({ stats }) => {
         <div className="animate-fade">
             {/* KPI Cards */}
             <div className="dashboard-kpi-grid">
-                <KpiCard icon={<BookOpen size={20} />} label="Total Books" value={stats.total_books} color="#10b981" />
-                <KpiCard icon={<Clock size={20} />} label="Active Loans" value={stats.borrowed_books} color="#f59e0b" />
-                <KpiCard icon={<AlertCircle size={20} />} label="Overdue" value={stats.overdue_count} color="#ef4444" />
-                <KpiCard icon={<Users size={20} />} label="Total Users" value={stats.total_users} color="#14b8a6" />
+                <KpiCard icon={<BookOpen size={20} />} label="Total Books" value={stats.total_books} color="#0f766e" />
+                <KpiCard icon={<Clock size={20} />} label="Active Loans" value={stats.borrowed_books} color="#b7791f" />
+                <KpiCard icon={<AlertCircle size={20} />} label="Overdue" value={stats.overdue_count} color="#c2414e" />
+                <KpiCard icon={<Users size={20} />} label="Total Users" value={stats.total_users} color="#1e3a5f" />
             </div>
 
             {/* Charts Grid */}
@@ -50,7 +49,7 @@ const AdminDashboard = ({ stats }) => {
                             <PieChart>
                                 <Pie
                                     data={stats.inventory_status}
-                                    color="#10b981"
+                                    color="var(--primary)"
                                     dataKey="value"
                                     nameKey="name"
                                     cx="50%"
@@ -59,15 +58,15 @@ const AdminDashboard = ({ stats }) => {
                                     label
                                 >
                                     {stats.inventory_status?.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={index === 0 ? '#10b981' : '#f59e0b'} />
+                                        <Cell key={`cell-${index}`} fill={index === 0 ? '#0f766e' : '#b7791f'} />
                                     ))}
                                 </Pie>
                                 <Tooltip
                                     contentStyle={{
-                                        background: 'rgba(15, 22, 33, 0.95)',
+                                        background: '#ffffff',
                                         border: '1px solid var(--glass-border)',
                                         borderRadius: '8px',
-                                        color: '#f8fafc',
+                                        color: '#172b4d',
                                         fontSize: '0.85rem'
                                     }}
                                 />
@@ -85,16 +84,16 @@ const AdminDashboard = ({ stats }) => {
                     <div className="chart-wrapper">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={stats.category_data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.06)" />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e4eaf1" />
                                 <XAxis dataKey="name" stroke="var(--text-dim)" fontSize={11} tickLine={false} />
                                 <YAxis stroke="var(--text-dim)" fontSize={11} tickLine={false} />
                                 <Tooltip
-                                    cursor={{ fill: 'rgba(255,255,255,0.03)' }}
+                                    cursor={{ fill: 'rgba(23,43,77,0.04)' }}
                                     contentStyle={{
-                                        background: 'rgba(15, 22, 33, 0.95)',
+                                        background: '#ffffff',
                                         border: '1px solid var(--glass-border)',
                                         borderRadius: '8px',
-                                        color: '#f8fafc',
+                                        color: '#172b4d',
                                         fontSize: '0.85rem'
                                     }}
                                 />
@@ -113,19 +112,16 @@ const AdminDashboard = ({ stats }) => {
 };
 
 // --- EMPLOYEE / MEMBER COMPONENT ---
-const EmployeeDashboard = ({ user, bookshelf }) => {
+const EmployeeDashboard = ({ user, bookshelf, bookshelfError, onRetry }) => {
     const itemsPerPage = 12;
     const [currentPage, setCurrentPage] = useState(1);
 
-    const books = bookshelf || [];
+    const books = Array.isArray(bookshelf) ? bookshelf : [];
     const totalPages = Math.ceil(books.length / itemsPerPage);
     const currentBooks = books.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
-
-    const readingGoal = 12;
-    const progressPercent = Math.min(100, Math.round(((books.length || 0) / readingGoal) * 100));
 
     return (
         <div className="animate-fade">
@@ -143,28 +139,18 @@ const EmployeeDashboard = ({ user, bookshelf }) => {
 
             {/* Smart Goals & Insights Grid */}
             <div className="insights-grid">
-                {/* Reading Target Card */}
+                {/* Active Loans Card */}
                 <div className="glass-card reading-goal-card">
                     <div className="card-header">
                         <Award size={18} color="var(--primary)" />
-                        <h3>Annual Reading Target</h3>
+                        <h3>Active Loans</h3>
                     </div>
                     <div className="goal-counter">
-                        <span className="goal-number">{books.length || 0}</span>
-                        <span className="goal-total">/ {readingGoal} books read</span>
-                    </div>
-
-                    {/* Progress Bar */}
-                    <div className="progress-bar-bg">
-                        <div
-                            className="progress-bar-fill"
-                            style={{ width: `${progressPercent}%` }}
-                        />
+                        <span className="goal-number">{books.length}</span>
+                        <span className="goal-total">{books.length === 1 ? 'book' : 'books'} currently checked out</span>
                     </div>
                     <p className="goal-status-text">
-                        {books.length >= readingGoal
-                            ? 'Milestone achieved for the current period.'
-                            : `${readingGoal - books.length} books remaining to reach your target.`}
+                        Check due dates and loan status on each book below.
                     </p>
                 </div>
 
@@ -205,7 +191,16 @@ const EmployeeDashboard = ({ user, bookshelf }) => {
                     </span>
                 </div>
 
-                {books.length === 0 ? (
+                {bookshelfError ? (
+                    <div className="glass-card empty-state">
+                        <AlertCircle size={36} color="var(--danger)" style={{ marginBottom: '0.75rem' }} />
+                        <h3>Unable to load your bookshelf</h3>
+                        <p>{bookshelfError}</p>
+                        <button type="button" className="btn-primary" style={{ marginTop: '1rem' }} onClick={onRetry}>
+                            Try Again
+                        </button>
+                    </div>
+                ) : books.length === 0 ? (
                     <div className="glass-card empty-state">
                         <BookOpen size={40} color="var(--text-dim)" style={{ marginBottom: '0.75rem', opacity: 0.5 }} />
                         <h3>No Borrowed Books</h3>
@@ -217,7 +212,7 @@ const EmployeeDashboard = ({ user, bookshelf }) => {
                 ) : (
                     <>
                         <div className="bookshelf-grid">
-                            {currentBooks.map((book, idx) => {
+                            {currentBooks.map(book => {
                                 const due = new Date(book.due_date);
                                 const isOverdue = due < new Date();
                                 const displayTitle = book.title || book.book_title;
@@ -225,7 +220,7 @@ const EmployeeDashboard = ({ user, bookshelf }) => {
                                 const displayAuthor = book.author || 'Unknown Author';
 
                                 return (
-                                    <div key={idx} className="glass-card book-card hover-lift">
+                                    <div key={book.id} className="glass-card book-card hover-lift">
                                         {isOverdue && (
                                             <div className="status-badge overdue">
                                                 <AlertCircle size={10} /> Overdue
@@ -275,20 +270,30 @@ const EmployeeDashboard = ({ user, bookshelf }) => {
 const Dashboard = ({ user }) => {
     const [stats, setStats] = useState(null);
     const [bookshelf, setBookshelf] = useState([]);
+    const [bookshelfError, setBookshelfError] = useState('');
     const [loading, setLoading] = useState(true);
+    const [retryCount, setRetryCount] = useState(0);
 
     useEffect(() => {
         const fetchDashboardData = async () => {
+            setLoading(true);
             try {
                 if (user?.is_admin) {
                     const res = await api.get('/admin/stats');
                     setStats(res.data);
                 } else {
                     const res = await api.get('/books/bookshelf');
+                    if (!Array.isArray(res.data)) {
+                        throw new Error('The bookshelf response was not a list.');
+                    }
                     setBookshelf(res.data);
+                    setBookshelfError('');
                 }
             } catch (err) {
                 console.error("Dashboard data load error", err);
+                if (!user?.is_admin) {
+                    setBookshelfError(err.response?.data?.message || 'Please try again in a moment.');
+                }
             } finally {
                 setLoading(false);
             }
@@ -297,7 +302,7 @@ const Dashboard = ({ user }) => {
         if (user) {
             fetchDashboardData();
         }
-    }, [user]);
+    }, [user, retryCount]);
 
     if (loading) {
         return <div className="loading">Loading dashboard...</div>;
@@ -308,7 +313,12 @@ const Dashboard = ({ user }) => {
             {user?.is_admin ? (
                 <AdminDashboard stats={stats || {}} />
             ) : (
-                <EmployeeDashboard user={user} bookshelf={bookshelf} />
+                <EmployeeDashboard
+                    user={user}
+                    bookshelf={bookshelf}
+                    bookshelfError={bookshelfError}
+                    onRetry={() => setRetryCount(count => count + 1)}
+                />
             )}
 
             <style>{`
@@ -440,22 +450,6 @@ const Dashboard = ({ user }) => {
                     font-weight: 500;
                 }
 
-                .progress-bar-bg {
-                    width: 100%;
-                    height: 7px;
-                    background: rgba(255, 255, 255, 0.06);
-                    border-radius: var(--radius-full);
-                    margin-bottom: 0.75rem;
-                    overflow: hidden;
-                }
-
-                .progress-bar-fill {
-                    height: 100%;
-                    background: linear-gradient(90deg, #10b981 0%, #14b8a6 100%);
-                    border-radius: var(--radius-full);
-                    transition: width 0.8s ease-out;
-                }
-
                 .goal-status-text {
                     font-size: 0.82rem;
                     color: var(--text-muted);
@@ -500,15 +494,15 @@ const Dashboard = ({ user }) => {
                     border-radius: var(--radius-full);
                     font-size: 0.76rem;
                     font-weight: 500;
-                    background: rgba(255, 255, 255, 0.04);
+                    background: #f8fafc;
                     border: 1px solid var(--glass-border);
                     color: var(--text-main);
                     transition: all 0.2s ease;
                 }
 
                 .category-chip:hover {
-                    background: rgba(16, 185, 129, 0.15);
-                    border-color: rgba(16, 185, 129, 0.3);
+                    background: rgba(15, 118, 110, 0.08);
+                    border-color: rgba(15, 118, 110, 0.24);
                     color: var(--primary);
                 }
 
@@ -527,7 +521,7 @@ const Dashboard = ({ user }) => {
                     font-size: 0.75rem;
                     font-weight: 600;
                     padding: 3px 9px;
-                    background: rgba(255, 255, 255, 0.04);
+                    background: #f8fafc;
                     border: 1px solid var(--glass-border);
                     border-radius: var(--radius-full);
                     color: var(--text-muted);
@@ -566,7 +560,7 @@ const Dashboard = ({ user }) => {
                     position: absolute;
                     top: 0.65rem;
                     right: 0.65rem;
-                    background: rgba(239, 68, 68, 0.95);
+                    background: #c2414e;
                     color: #ffffff;
                     padding: 2px 7px;
                     border-radius: 4px;
@@ -584,7 +578,7 @@ const Dashboard = ({ user }) => {
                     justify-content: center;
                     align-items: center;
                     margin-bottom: 0.75rem;
-                    background: rgba(0, 0, 0, 0.25);
+                    background: #f1f5f9;
                     border-radius: 6px;
                     padding: 6px;
                 }
@@ -594,7 +588,7 @@ const Dashboard = ({ user }) => {
                     max-width: 100%;
                     object-fit: contain;
                     border-radius: 4px;
-                    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+                    box-shadow: 0 4px 10px rgba(23, 43, 77, 0.14);
                 }
 
                 .book-title {

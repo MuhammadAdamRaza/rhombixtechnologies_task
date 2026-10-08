@@ -144,7 +144,7 @@ const Navbar = ({ user, setUser }) => {
                     margin: 1rem 1.5rem 0.5rem 1.5rem;
                     padding: 0.65rem 1.25rem;
                     border: 1px solid var(--glass-border);
-                    background: rgba(14, 20, 30, 0.85);
+                    background: rgba(255, 255, 255, 0.96);
                 }
 
                 .navbar-container {
@@ -167,8 +167,8 @@ const Navbar = ({ user, setUser }) => {
                     width: 38px;
                     height: 38px;
                     border-radius: 10px;
-                    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.1) 100%);
-                    border: 1px solid rgba(16, 185, 129, 0.3);
+                    background: var(--primary-glow);
+                    border: 1px solid var(--primary-border);
                     display: flex;
                     align-items: center;
                     justify-content: center;
@@ -201,9 +201,9 @@ const Navbar = ({ user, setUser }) => {
                     letter-spacing: 0.05em;
                     padding: 2px 7px;
                     border-radius: 4px;
-                    background: rgba(16, 185, 129, 0.15);
+                    background: var(--primary-glow);
                     color: var(--primary);
-                    border: 1px solid rgba(16, 185, 129, 0.3);
+                    border: 1px solid var(--primary-border);
                 }
 
                 .mobile-toggle-btn {
@@ -244,7 +244,7 @@ const Navbar = ({ user, setUser }) => {
 
                 .nav-item:hover {
                     color: var(--text-main);
-                    background: rgba(255, 255, 255, 0.04);
+                    background: #f3f7fa;
                 }
 
                 .nav-item.active {
@@ -283,7 +283,7 @@ const Navbar = ({ user, setUser }) => {
                     display: flex;
                     align-items: center;
                     gap: 0.4rem;
-                    background: rgba(255, 255, 255, 0.03);
+                    background: #f8fafc;
                     border: 1px solid var(--glass-border);
                     color: var(--text-muted);
                     padding: 0.45rem 0.65rem;
@@ -318,7 +318,7 @@ const Navbar = ({ user, setUser }) => {
                         top: calc(100% + 0.5rem);
                         left: 0;
                         right: 0;
-                        background: rgba(14, 20, 30, 0.98);
+                        background: #ffffff;
                         backdrop-filter: blur(20px);
                         -webkit-backdrop-filter: blur(20px);
                         border: 1px solid var(--border-light);
@@ -327,7 +327,7 @@ const Navbar = ({ user, setUser }) => {
                         flex-direction: column;
                         align-items: stretch;
                         gap: 1.25rem;
-                        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+                        box-shadow: var(--shadow-lg);
                         display: none;
                     }
 

@@ -17,9 +17,9 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ padding: '2rem', color: '#f8fafc', background: '#0a0e14', minHeight: '100vh', fontFamily: 'sans-serif' }}>
-          <h1 style={{ color: '#ef4444', marginBottom: '1rem' }}>Application Encountered an Error</h1>
-          <pre style={{ background: '#121822', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.08)', overflow: 'auto', marginTop: '1rem', color: '#94a3b8' }}>
+        <div style={{ padding: '2rem', color: '#172b4d', background: '#f4f7fb', minHeight: '100vh', fontFamily: 'sans-serif' }}>
+          <h1 style={{ color: '#c2414e', marginBottom: '1rem' }}>Application Encountered an Error</h1>
+          <pre style={{ background: '#ffffff', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e9f0', overflow: 'auto', marginTop: '1rem', color: '#52657d' }}>
             {this.state.error?.toString()}
           </pre>
           <button onClick={() => window.location.reload()} style={{ marginTop: '1.5rem', padding: '10px 22px', background: '#10b981', border: 'none', color: 'white', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>

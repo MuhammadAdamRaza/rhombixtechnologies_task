@@ -3,6 +3,17 @@ import api from '../services/api';
 import { Globe, Search, BookOpen, Plus, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import Pagination from '../components/Pagination';
 
+const categories = [
+    { name: 'Fiction', query: 'fiction bestseller' },
+    { name: 'Programming', query: 'programming python javascript' },
+    { name: 'Science', query: 'science physics chemistry' },
+    { name: 'Business', query: 'business management startup' },
+    { name: 'Self-Help', query: 'self help motivation' },
+    { name: 'History', query: 'history world war' },
+    { name: 'Biography', query: 'biography memoir' },
+    { name: 'Technology', query: 'technology AI computer' }
+];
+
 const AdminGoogleBooks = () => {
     const [category, setCategory] = useState('Fiction');
     const [books, setBooks] = useState([]);
@@ -16,43 +27,33 @@ const AdminGoogleBooks = () => {
     const itemsPerPage = 20;
     const totalPages = Math.ceil(books.length / itemsPerPage);
 
-    const categories = [
-        { name: 'Fiction', query: 'fiction bestseller' },
-        { name: 'Programming', query: 'programming python javascript' },
-        { name: 'Science', query: 'science physics chemistry' },
-        { name: 'Business', query: 'business management startup' },
-        { name: 'Self-Help', query: 'self help motivation' },
-        { name: 'History', query: 'history world war' },
-        { name: 'Biography', query: 'biography memoir' },
-        { name: 'Technology', query: 'technology AI computer' }
-    ];
-
     useEffect(() => {
-        loadCategory(category);
-    }, [category]);
+        const loadCategory = async () => {
+            setLoading(true);
+            setMessage({ text: '', type: '' });
+            setCurrentPage(1);
+            const catQuery = categories.find(c => c.name === category)?.query || category;
 
-    const loadCategory = async (cat) => {
-        setLoading(true);
-        setMessage({ text: '', type: '' });
-        setCurrentPage(1);
-        const catQuery = categories.find(c => c.name === cat)?.query || cat;
+            try {
+                const res = await api.get('/books/search-global', { params: { q: catQuery } });
+                setBooks(res.data || []);
 
-        try {
-            const res = await api.get('/books/search-global', { params: { q: catQuery } });
-            setBooks(res.data || []);
-
-            if (!res.data || res.data.length === 0) {
-                setMessage({
-                    text: 'No results returned from Google Books API for this genre.',
-                    type: 'warning'
-                });
+                if (!res.data || res.data.length === 0) {
+                    setMessage({
+                        text: 'No results returned from Google Books API for this genre.',
+                        type: 'warning'
+                    });
+                }
+            } catch (err) {
+                console.error('Unable to communicate with Google Books service', err);
+                setMessage({ text: 'Unable to communicate with Google Books service', type: 'error' });
+            } finally {
+                setLoading(false);
             }
-        } catch (err) {
-            setMessage({ text: 'Unable to communicate with Google Books service', type: 'error' });
-        } finally {
-            setLoading(false);
-        }
-    };
+        };
+
+        loadCategory();
+    }, [category]);
 
     const handleSearch = async (e) => {
         e.preventDefault();
@@ -72,6 +73,7 @@ const AdminGoogleBooks = () => {
                 setMessage({ text: `No titles found matching "${searchQuery}".`, type: 'warning' });
             }
         } catch (err) {
+            console.error('Google Books search failed', err);
             setMessage({ text: 'Search request failed', type: 'error' });
         } finally {
             setLoading(false);
@@ -92,6 +94,7 @@ const AdminGoogleBooks = () => {
             setMessage({ text: `"${book.title}" added to inventory`, type: 'success' });
             setBooks(books.map(b => b.isbn === book.isbn ? { ...b, in_library: true } : b));
         } catch (err) {
+            console.error('Failed to import Google Books result', err);
             setMessage({ text: err.response?.data?.message || 'Import operation failed', type: 'error' });
         } finally {
             setImporting(null);
@@ -250,7 +253,7 @@ const AdminGoogleBooks = () => {
                     padding: 6px 14px;
                     border-radius: var(--radius-full);
                     border: 1px solid var(--glass-border);
-                    background: rgba(255, 255, 255, 0.03);
+                    background: #ffffff;
                     color: var(--text-main);
                     cursor: pointer;
                     font-weight: 500;
@@ -261,7 +264,7 @@ const AdminGoogleBooks = () => {
                 }
 
                 .category-pill:hover:not(.active) {
-                    background: rgba(255, 255, 255, 0.07);
+                    background: #f3f7fa;
                 }
 
                 .category-pill.active {
@@ -269,7 +272,7 @@ const AdminGoogleBooks = () => {
                     color: #ffffff;
                     border-color: var(--primary);
                     font-weight: 600;
-                    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+                    box-shadow: 0 2px 8px rgba(15, 118, 110, 0.2);
                 }
 
                 .google-books-grid {
@@ -291,7 +294,7 @@ const AdminGoogleBooks = () => {
                     justify-content: center;
                     align-items: center;
                     margin-bottom: 0.75rem;
-                    background: rgba(0, 0, 0, 0.25);
+                    background: #f1f5f9;
                     border-radius: var(--radius-sm);
                     padding: 6px;
                 }
@@ -301,7 +304,7 @@ const AdminGoogleBooks = () => {
                     max-width: 100%;
                     object-fit: contain;
                     border-radius: 4px;
-                    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+                    box-shadow: 0 4px 10px rgba(23, 43, 77, 0.14);
                 }
 
                 .google-book-title {

@@ -75,8 +75,7 @@ function App() {
             padding: '2.5rem 1.5rem',
             textAlign: 'center',
             borderTop: '1px solid var(--glass-border)',
-            background: 'rgba(10, 14, 20, 0.75)',
-            backdropFilter: 'blur(10px)',
+            background: 'rgba(255, 255, 255, 0.88)',
             marginTop: 'auto'
           }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>

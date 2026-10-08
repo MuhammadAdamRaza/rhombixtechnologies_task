@@ -100,7 +100,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                     border-radius: var(--radius-sm);
                     font-size: 0.85rem;
                     font-weight: 600;
-                    background: rgba(255, 255, 255, 0.04);
+                    background: #f8fafc;
                     border: 1px solid var(--glass-border);
                     color: var(--text-main);
                     cursor: pointer;
@@ -108,7 +108,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                 }
 
                 .pagination-nav-btn:hover:not(:disabled) {
-                    background: rgba(255, 255, 255, 0.09);
+                    background: #eef3f7;
                     border-color: var(--border-light);
                 }
 
@@ -135,7 +135,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                 }
 
                 .pagination-number-btn:hover:not(.active) {
-                    background: rgba(255, 255, 255, 0.05);
+                    background: #f3f7fa;
                     color: var(--text-main);
                 }
 
@@ -144,7 +144,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                     color: #ffffff;
                     border-color: var(--primary);
                     font-weight: 700;
-                    box-shadow: 0 2px 10px rgba(16, 185, 129, 0.35);
+                    box-shadow: 0 2px 10px rgba(15, 118, 110, 0.2);
                 }
 
                 .pagination-ellipsis {

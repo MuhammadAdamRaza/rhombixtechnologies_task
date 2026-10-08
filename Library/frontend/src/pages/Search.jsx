@@ -68,6 +68,7 @@ const Search = () => {
                 setMessage({ text: 'No titles matching your query were found.', type: 'info' });
             }
         } catch (err) {
+            console.error('Book search failed', err);
             setMessage({ text: 'Search operation failed. Please verify connection.', type: 'error' });
         } finally {
             setLoading(false);
@@ -284,11 +285,11 @@ const Search = () => {
                 .search-bar-form {
                     display: flex;
                     gap: 0.65rem;
-                    background: rgba(18, 24, 34, 0.95);
+                    background: #ffffff;
                     border: 1px solid var(--glass-border);
                     padding: 6px;
                     border-radius: var(--radius-md);
-                    box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+                    box-shadow: var(--shadow-md);
                 }
 
                 .search-input-wrap {
@@ -389,7 +390,7 @@ const Search = () => {
                     display: flex;
                     justify-content: center;
                     align-items: center;
-                    background: rgba(0, 0, 0, 0.25);
+                    background: #f1f5f9;
                     border-radius: var(--radius-sm);
                     padding: 6px;
                     margin-bottom: 0.85rem;
@@ -400,7 +401,7 @@ const Search = () => {
                     max-width: 100%;
                     object-fit: contain;
                     border-radius: 4px;
-                    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+                    box-shadow: 0 4px 10px rgba(23, 43, 77, 0.14);
                 }
 
                 .book-placeholder-cover {

@@ -21,6 +21,7 @@ const AdminImport = () => {
                 setMessage({ text: 'No matching titles found on Google Books.', type: 'info' });
             }
         } catch (err) {
+            console.error('Google Books search failed', err);
             setMessage({ text: 'Search operation failed.', type: 'error' });
         } finally {
             setLoading(false);

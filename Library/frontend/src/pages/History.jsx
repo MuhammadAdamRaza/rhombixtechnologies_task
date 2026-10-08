@@ -34,6 +34,7 @@ const History = () => {
             await api.post('/books/return', { history_id: id });
             setHistory(history.map(h => h.id === id ? { ...h, return_date: new Date().toISOString() } : h));
         } catch (err) {
+            console.error('Failed to process book return', err);
             alert("Failed to process book return");
         }
     };
@@ -70,7 +71,7 @@ const History = () => {
                 <div className="table-container desktop-table-view">
                     <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                         <thead>
-                            <tr style={{ background: 'rgba(255, 255, 255, 0.02)', borderBottom: '1px solid var(--glass-border)' }}>
+                            <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--glass-border)' }}>
                                 {isAdmin && <th style={{ padding: '0.85rem 1.25rem', color: 'var(--text-muted)', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Member</th>}
                                 <th style={{ padding: '0.85rem 1.25rem', color: 'var(--text-muted)', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Book Title</th>
                                 <th style={{ padding: '0.85rem 1.25rem', color: 'var(--text-muted)', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Borrowed</th>
@@ -208,7 +209,7 @@ const History = () => {
                     }
 
                     .mobile-history-card {
-                        background: rgba(255, 255, 255, 0.02);
+                        background: #f8fafc;
                         border: 1px solid var(--glass-border);
                         border-radius: var(--radius-sm);
                         padding: 0.9rem;
@@ -240,7 +241,7 @@ const History = () => {
                         font-size: 0.76rem;
                         color: var(--text-dim);
                         padding-top: 0.35rem;
-                        border-top: 1px solid rgba(255, 255, 255, 0.04);
+                        border-top: 1px solid var(--glass-border);
                     }
 
                     .text-danger {

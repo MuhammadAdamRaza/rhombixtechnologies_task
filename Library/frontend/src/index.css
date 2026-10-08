@@ -1,40 +1,39 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
 
 :root {
-  /* Executive Professional Emerald & Charcoal Theme - Absolutely No Purple or Blue */
-  --primary: #10b981;
-  --primary-hover: #059669;
-  --primary-glow: rgba(16, 185, 129, 0.15);
-  --primary-border: rgba(16, 185, 129, 0.3);
+  --primary: #0f766e;
+  --primary-hover: #115e59;
+  --primary-glow: rgba(15, 118, 110, 0.1);
+  --primary-border: rgba(15, 118, 110, 0.25);
   
-  --secondary: #14b8a6;
-  --secondary-hover: #0d9488;
+  --secondary: #1e3a5f;
+  --secondary-hover: #172f4d;
   
-  --accent: #f59e0b;
-  --accent-glow: rgba(245, 158, 11, 0.15);
+  --accent: #b7791f;
+  --accent-glow: rgba(183, 121, 31, 0.12);
 
-  --bg-dark: #0a0e14;
-  --bg-surface: #111722;
-  --bg-card: rgba(18, 24, 34, 0.82);
-  --bg-card-hover: rgba(24, 32, 45, 0.95);
-  --bg-card-solid: #151d2b;
+  --bg-dark: #f4f7fb;
+  --bg-surface: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fbfd;
+  --bg-card-solid: #ffffff;
 
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --text-dim: #64748b;
+  --text-main: #172b4d;
+  --text-muted: #52657d;
+  --text-dim: #71839a;
 
-  --border: rgba(255, 255, 255, 0.08);
-  --border-light: rgba(255, 255, 255, 0.14);
-  --glass: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.08);
+  --border: #e4eaf1;
+  --border-light: #ced9e5;
+  --glass: rgba(255, 255, 255, 0.8);
+  --glass-border: #e2e9f0;
 
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
+  --success: #16856a;
+  --warning: #a96e11;
+  --danger: #c2414e;
 
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.45);
+  --shadow-sm: 0 2px 8px rgba(23, 43, 77, 0.05);
+  --shadow-md: 0 8px 24px rgba(23, 43, 77, 0.08);
+  --shadow-lg: 0 16px 40px rgba(23, 43, 77, 0.12);
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
@@ -57,9 +56,8 @@ body {
   font-family: 'Plus Jakarta Sans', 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: var(--bg-dark);
   background-image:
-    radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.07) 0px, transparent 45%),
-    radial-gradient(at 100% 100%, rgba(20, 184, 166, 0.05) 0px, transparent 45%),
-    linear-gradient(180deg, rgba(10, 14, 20, 0.6) 0%, rgba(10, 14, 20, 1) 100%);
+    radial-gradient(at 0% 0%, rgba(15, 118, 110, 0.05) 0px, transparent 42%),
+    radial-gradient(at 100% 100%, rgba(30, 58, 95, 0.04) 0px, transparent 42%);
   background-attachment: fixed;
   color: var(--text-main);
   min-height: 100vh;
@@ -96,8 +94,6 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 /* Glass Card */
 .glass-card {
   background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
@@ -110,7 +106,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 
 /* Professional Buttons */
 .btn-primary {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, #0f766e 0%, #115e59 100%);
   color: #ffffff;
   padding: 10px 22px;
   border-radius: var(--radius-sm);
@@ -120,8 +116,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+  border: 1px solid rgba(15, 118, 110, 0.18);
+  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.18);
   text-decoration: none;
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -129,9 +125,9 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #12be85 0%, #047857 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  background: linear-gradient(135deg, #0d8278 0%, #0f5b56 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(15, 118, 110, 0.24);
 }
 
 .btn-primary:active:not(:disabled) {
@@ -146,7 +142,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 }
 
 .btn-secondary {
-  background: var(--glass);
+  background: #ffffff;
   color: var(--text-main);
   padding: 10px 20px;
   border-radius: var(--radius-sm);
@@ -164,13 +160,13 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: #f3f7fa;
   border-color: var(--border-light);
 }
 
 /* Inputs */
 .input-field {
-  background: rgba(14, 20, 29, 0.7);
+  background: #ffffff;
   border: 1px solid var(--glass-border);
   color: var(--text-main);
   padding: 12px 16px;
@@ -184,7 +180,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 
 .input-field:focus {
   border-color: var(--primary);
-  background: rgba(18, 26, 38, 0.95);
+  background: #ffffff;
   box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
@@ -205,7 +201,17 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 }
 
 .animate-fade {
-  animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeIn 0.3s ease-out both;
+}
+
+.spin {
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .hover-lift {
@@ -214,7 +220,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 
 @media (hover: hover) {
   .hover-lift:hover {
-    transform: translateY(-4px);
+    transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
     border-color: var(--border-light);
   }
@@ -272,12 +278,21 @@ table {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #c7d2df;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #aab8c8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Responsive Breakpoints */
