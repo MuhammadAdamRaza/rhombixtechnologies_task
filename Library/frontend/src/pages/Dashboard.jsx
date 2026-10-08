@@ -5,56 +5,102 @@ import {
 } from 'recharts';
 import {
     Users, BookOpen, Clock, AlertCircle, TrendingUp, Search as SearchIcon,
-    ArrowRight, Book as BookIcon, PlusCircle
+    ArrowRight, Book as BookIcon, CheckCircle2, Award, Calendar, BookCheck
 } from 'lucide-react';
 import api from '../services/api';
 import { useNavigate, Link } from 'react-router-dom';
-import Pagination from '../components/Pagination'; // <--- IMPORTED PAGINATION
+import Pagination from '../components/Pagination';
 
-// --- ADMIN COMPONENT (Unchanged) ---
+// Professional Executive Palette (No Purple or Blue)
+const PALETTE = ['#10b981', '#14b8a6', '#f59e0b', '#0d9488', '#ef4444', '#84cc16'];
+
+const KpiCard = ({ icon, label, value, color }) => (
+    <div className="glass-card kpi-card" style={{ borderLeft: `3px solid ${color}` }}>
+        <div className="kpi-icon-wrap" style={{ background: `${color}18`, color: color }}>
+            {icon}
+        </div>
+        <div className="kpi-data">
+            <span className="kpi-label">{label}</span>
+            <span className="kpi-value">{value ?? 0}</span>
+        </div>
+    </div>
+);
+
+// --- ADMIN COMPONENT ---
 const AdminDashboard = ({ stats }) => {
-    const COLORS = ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#ef4444'];
-
     return (
         <div className="animate-fade">
             {/* KPI Cards */}
-            <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-                <KpiCard icon={<BookOpen />} label="Total Books" value={stats.total_books} color="#6366f1" />
-                <KpiCard icon={<Clock />} label="Active Loans" value={stats.borrowed_books} color="#f59e0b" />
-                <KpiCard icon={<AlertCircle />} label="Overdue" value={stats.overdue_count} color="#ef4444" />
-                <KpiCard icon={<Users />} label="Total Users" value={stats.total_users} color="#10b981" />
+            <div className="dashboard-kpi-grid">
+                <KpiCard icon={<BookOpen size={20} />} label="Total Books" value={stats.total_books} color="#10b981" />
+                <KpiCard icon={<Clock size={20} />} label="Active Loans" value={stats.borrowed_books} color="#f59e0b" />
+                <KpiCard icon={<AlertCircle size={20} />} label="Overdue" value={stats.overdue_count} color="#ef4444" />
+                <KpiCard icon={<Users size={20} />} label="Total Users" value={stats.total_users} color="#14b8a6" />
             </div>
 
-            {/* Charts */}
-            <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-                <div className="glass-card" style={{ padding: '1.5rem' }}>
-                    <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <TrendingUp size={20} color="var(--primary)" /> Inventory Status
-                    </h3>
-                    <div style={{ height: 300 }}>
+            {/* Charts Grid */}
+            <div className="dashboard-charts-grid">
+                <div className="glass-card chart-card">
+                    <div className="card-header">
+                        <TrendingUp size={18} color="var(--primary)" />
+                        <h3>Inventory Allocation</h3>
+                    </div>
+                    <div className="chart-wrapper">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
-                                <Pie data={stats.inventory_status} color="#8884d8" dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
-                                    {stats.inventory_status?.map((entry, index) => <Cell key={`cell-${index}`} fill={index === 0 ? '#10b981' : '#f59e0b'} />)}
+                                <Pie
+                                    data={stats.inventory_status}
+                                    color="#10b981"
+                                    dataKey="value"
+                                    nameKey="name"
+                                    cx="50%"
+                                    cy="50%"
+                                    outerRadius={75}
+                                    label
+                                >
+                                    {stats.inventory_status?.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={index === 0 ? '#10b981' : '#f59e0b'} />
+                                    ))}
                                 </Pie>
-                                <Tooltip contentStyle={{ background: 'var(--glass)', border: '1px solid var(--glass-border)', borderRadius: '8px' }} />
-                                <Legend />
+                                <Tooltip
+                                    contentStyle={{
+                                        background: 'rgba(15, 22, 33, 0.95)',
+                                        border: '1px solid var(--glass-border)',
+                                        borderRadius: '8px',
+                                        color: '#f8fafc',
+                                        fontSize: '0.85rem'
+                                    }}
+                                />
+                                <Legend wrapperStyle={{ fontSize: '0.8rem' }} />
                             </PieChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
-                <div className="glass-card" style={{ padding: '1.5rem' }}>
-                    <h3 style={{ marginBottom: '1.5rem' }}>Books by Category</h3>
-                    <div style={{ height: 300 }}>
+
+                <div className="glass-card chart-card">
+                    <div className="card-header">
+                        <BookCheck size={18} color="var(--secondary)" />
+                        <h3>Catalog by Category</h3>
+                    </div>
+                    <div className="chart-wrapper">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={stats.category_data}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.1)" />
-                                <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={12} />
-                                <YAxis stroke="var(--text-muted)" fontSize={12} />
-                                <Tooltip cursor={{ fill: 'rgba(255,255,255,0.05)' }} contentStyle={{ background: 'var(--glass)', border: '1px solid var(--glass-border)', borderRadius: '8px' }} />
+                            <BarChart data={stats.category_data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.06)" />
+                                <XAxis dataKey="name" stroke="var(--text-dim)" fontSize={11} tickLine={false} />
+                                <YAxis stroke="var(--text-dim)" fontSize={11} tickLine={false} />
+                                <Tooltip
+                                    cursor={{ fill: 'rgba(255,255,255,0.03)' }}
+                                    contentStyle={{
+                                        background: 'rgba(15, 22, 33, 0.95)',
+                                        border: '1px solid var(--glass-border)',
+                                        borderRadius: '8px',
+                                        color: '#f8fafc',
+                                        fontSize: '0.85rem'
+                                    }}
+                                />
                                 <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                                     {stats.category_data?.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                        <Cell key={`bar-${index}`} fill={PALETTE[index % PALETTE.length]} />
                                     ))}
                                 </Bar>
                             </BarChart>
@@ -66,75 +112,79 @@ const AdminDashboard = ({ stats }) => {
     );
 };
 
-// --- EMPLOYEE COMPONENT (Simplified) ---
+// --- EMPLOYEE / MEMBER COMPONENT ---
 const EmployeeDashboard = ({ user, bookshelf }) => {
-    const navigate = useNavigate();
-    const itemsPerPage = 20;
+    const itemsPerPage = 12;
     const [currentPage, setCurrentPage] = useState(1);
 
-    // Only show borrowed books here
     const books = bookshelf || [];
-
     const totalPages = Math.ceil(books.length / itemsPerPage);
     const currentBooks = books.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
 
+    const readingGoal = 12;
+    const progressPercent = Math.min(100, Math.round(((books.length || 0) / readingGoal) * 100));
+
     return (
         <div className="animate-fade">
-            {/* Welcome Header */}
-            <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                    <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>
-                        Welcome back, {user?.email?.split('@')[0] || 'Reader'}! 👋
-                    </h1>
-                    <p style={{ color: 'var(--text-muted)' }}>Here is your personal library activity.</p>
+            {/* Welcome Banner */}
+            <div className="welcome-banner glass-card">
+                <div className="welcome-info">
+                    <h1>Welcome, {user?.email?.split('@')[0] || 'Reader'}</h1>
+                    <p>Overview of your borrowed titles and reading progress</p>
                 </div>
-                <Link to="/library/search" className="btn-primary" style={{ textDecoration: 'none' }}>
-                    <SearchIcon size={18} /> Browse Full Library
+                <Link to="/library/search" className="btn-primary browse-btn" style={{ textDecoration: 'none' }}>
+                    <SearchIcon size={16} />
+                    <span>Explore Library</span>
                 </Link>
             </div>
 
-            {/* Smart View: Quote, Reading Goal, and Quick Categories */}
-            <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
-
-                {/* 1. Gamified Reading Goal */}
-                <div className="glass-card element-visible" style={{ padding: '1.5rem', position: 'relative', overflow: 'hidden' }}>
-                    <div style={{ position: 'absolute', top: 0, left: 0, width: '4px', height: '100%', background: 'linear-gradient(to bottom, var(--primary), var(--secondary))' }} />
-                    <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                        <TrendingUp size={20} color="var(--primary)" /> Books Read
-                    </h3>
-                    <div style={{ display: 'flex', alignItems: 'end', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                        <span style={{ fontSize: '2.5rem', fontWeight: 800, lineHeight: 1 }}>{bookshelf?.length || 0}</span>
-                        <span style={{ fontSize: '1rem', color: 'var(--text-muted)', marginBottom: '6px' }}>books</span>
+            {/* Smart Goals & Insights Grid */}
+            <div className="insights-grid">
+                {/* Reading Target Card */}
+                <div className="glass-card reading-goal-card">
+                    <div className="card-header">
+                        <Award size={18} color="var(--primary)" />
+                        <h3>Annual Reading Target</h3>
+                    </div>
+                    <div className="goal-counter">
+                        <span className="goal-number">{books.length || 0}</span>
+                        <span className="goal-total">/ {readingGoal} books read</span>
                     </div>
 
                     {/* Progress Bar */}
-                    <div style={{ width: '100%', height: '8px', background: 'var(--glass-border)', borderRadius: '4px', marginBottom: '1rem', overflow: 'hidden' }}>
-                        <div style={{ width: `${Math.min(100, ((bookshelf?.length || 0) / 12) * 100)}%`, height: '100%', background: 'linear-gradient(to right, var(--primary), var(--secondary))', borderRadius: '4px', transition: 'width 1s ease-out' }} />
+                    <div className="progress-bar-bg">
+                        <div
+                            className="progress-bar-fill"
+                            style={{ width: `${progressPercent}%` }}
+                        />
                     </div>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                        {(bookshelf?.length || 0) >= 12 ? '🎉 Goal Achieved! You are a Super Reader!' : 'Keep going! You are building a great habit.'}
+                    <p className="goal-status-text">
+                        {books.length >= readingGoal
+                            ? 'Milestone achieved for the current period.'
+                            : `${readingGoal - books.length} books remaining to reach your target.`}
                     </p>
                 </div>
 
-                {/* 2. Literary Quote & Discovery */}
-                <div className="glass-card element-visible" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ marginBottom: '1.5rem' }}>
-                        <h4 style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--primary)', marginBottom: '0.5rem' }}>Quote of the Day</h4>
-                        <p style={{ fontStyle: 'italic', color: 'var(--text-main)', fontSize: '1.05rem', lineHeight: 1.5 }}>
-                            "A reader lives a thousand lives before he dies. The man who never reads lives only one."
-                        </p>
-                        <p style={{ textAlign: 'right', fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>— George R.R. Martin</p>
+                {/* Literary Quote Card */}
+                <div className="glass-card quote-card">
+                    <div className="card-header">
+                        <BookOpen size={18} color="var(--secondary)" />
+                        <h3>Literary Highlight</h3>
                     </div>
+                    <blockquote className="quote-text">
+                        "A reader lives a thousand lives before he dies. The man who never reads lives only one."
+                    </blockquote>
+                    <cite className="quote-author">— George R.R. Martin</cite>
 
-                    {/* Quick Categories */}
-                    <div style={{ marginTop: 'auto' }}>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>Jump to a genre:</p>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    {/* Quick Category Chips */}
+                    <div className="category-chips">
+                        <span className="chips-label">Browse by genre:</span>
+                        <div className="chips-list">
                             {['Fiction', 'Technology', 'Science', 'History', 'Business'].map(cat => (
-                                <Link key={cat} to={`/library/search?q=${cat}`} style={{ textDecoration: 'none', padding: '6px 12px', borderRadius: '20px', fontSize: '0.8rem', background: 'var(--glass)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', transition: 'all 0.2s' }} className="hover-lift">
+                                <Link key={cat} to={`/library/search?q=${cat}`} className="category-chip">
                                     {cat}
                                 </Link>
                             ))}
@@ -143,22 +193,30 @@ const EmployeeDashboard = ({ user, bookshelf }) => {
                 </div>
             </div>
 
-            {/* My Bookshelf Section */}
-            <div style={{ marginBottom: '1.5rem' }}>
-                <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <BookIcon size={24} color="var(--primary)" /> My Bookshelf
-                </h2>
+            {/* Bookshelf Section */}
+            <div className="bookshelf-section">
+                <div className="section-title-row">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <BookIcon size={20} color="var(--primary)" />
+                        <h2>My Bookshelf</h2>
+                    </div>
+                    <span className="books-count-badge">
+                        {books.length} {books.length === 1 ? 'Book' : 'Books'}
+                    </span>
+                </div>
 
                 {books.length === 0 ? (
-                    <div style={{ padding: '3rem', textAlign: 'center', background: 'var(--glass)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-                        <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>You haven't borrowed any books yet.</p>
-                        <Link to="/library/search" className="btn-primary" style={{ textDecoration: 'none' }}>
-                            Start Reading
+                    <div className="glass-card empty-state">
+                        <BookOpen size={40} color="var(--text-dim)" style={{ marginBottom: '0.75rem', opacity: 0.5 }} />
+                        <h3>No Borrowed Books</h3>
+                        <p>You do not currently have any active loans.</p>
+                        <Link to="/library/search" className="btn-primary" style={{ marginTop: '1rem' }}>
+                            Browse Catalog
                         </Link>
                     </div>
                 ) : (
                     <>
-                        <div className="responsive-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+                        <div className="bookshelf-grid">
                             {currentBooks.map((book, idx) => {
                                 const due = new Date(book.due_date);
                                 const isOverdue = due < new Date();
@@ -167,36 +225,40 @@ const EmployeeDashboard = ({ user, bookshelf }) => {
                                 const displayAuthor = book.author || 'Unknown Author';
 
                                 return (
-                                    <div key={idx} className="glass-card hover-lift" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                                    <div key={idx} className="glass-card book-card hover-lift">
                                         {isOverdue && (
-                                            <div style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'var(--danger)', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600 }}>
-                                                OVERDUE
+                                            <div className="status-badge overdue">
+                                                <AlertCircle size={10} /> Overdue
                                             </div>
                                         )}
-                                        <div style={{ height: '200px', display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+                                        <div className="book-cover-wrap">
                                             <img
-                                                src={displayCover || 'https://via.placeholder.com/150x220?text=No+Cover'}
-                                                onError={(e) => { e.target.src = "https://via.placeholder.com/150x220?text=No+Cover"; }}
+                                                src={displayCover || 'https://placehold.co/150x220/1e2634/94a3b8?text=No+Cover'}
+                                                onError={(e) => { e.target.src = "https://placehold.co/150x220/1e2634/94a3b8?text=No+Cover"; }}
                                                 alt={displayTitle}
-                                                style={{ maxHeight: '100%', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}
+                                                className="book-cover-img"
+                                                loading="lazy"
                                             />
                                         </div>
-                                        <h4 style={{ fontSize: '0.95rem', marginBottom: '0.5rem', minHeight: '2.4em', lineHeight: 1.2 }}>
-                                            {displayTitle}
-                                        </h4>
-                                        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
-                                            {displayAuthor}
-                                        </p>
-                                        <div style={{ marginTop: 'auto', paddingTop: '0.5rem' }}>
-                                            <p style={{ fontSize: '0.75rem', color: isOverdue ? 'var(--danger)' : 'var(--warning)', fontWeight: 600 }}>
-                                                {isOverdue ? '⚠️ Overdue' : `Due: ${due.toLocaleDateString()}`}
+                                        <div className="book-info">
+                                            <h4 className="book-title" title={displayTitle}>
+                                                {displayTitle}
+                                            </h4>
+                                            <p className="book-author">
+                                                {displayAuthor}
                                             </p>
+                                            <div className="book-footer">
+                                                <span className={`due-tag ${isOverdue ? 'overdue' : 'active'}`}>
+                                                    <Calendar size={11} />
+                                                    {isOverdue ? `Due ${due.toLocaleDateString()}` : `Due: ${due.toLocaleDateString()}`}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 );
                             })}
                         </div>
-                        {/* Pagination for Bookshelf */}
+
                         <Pagination
                             currentPage={currentPage}
                             totalPages={totalPages}
@@ -209,85 +271,461 @@ const EmployeeDashboard = ({ user, bookshelf }) => {
     );
 };
 
-const KpiCard = ({ icon, label, value, color }) => (
-    <div className="glass-card" style={{ padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <div style={{ padding: '0.75rem', background: `${color}20`, borderRadius: '12px', color: color }}>
-            {icon && React.isValidElement(icon) ? React.cloneElement(icon, { size: 24 }) : null}
-        </div>
-        <div>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '0.25rem' }}>{label}</p>
-            <h2 style={{ fontSize: '1.75rem', lineHeight: 1 }}>{value ?? 0}</h2>
-        </div>
-    </div>
-);
-
+// Main Dashboard Wrapper
 const Dashboard = ({ user }) => {
-    const [data, setData] = useState(null);
+    const [stats, setStats] = useState(null);
+    const [bookshelf, setBookshelf] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [errorMsg, setErrorMsg] = useState(null);
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchDashboardData = async () => {
             try {
-                if (user.is_admin) {
+                if (user?.is_admin) {
                     const res = await api.get('/admin/stats');
-                    setData(res.data);
+                    setStats(res.data);
                 } else {
-                    const [recent, history] = await Promise.all([
-                        api.get('/books/recent'),
-                        api.get('/books/history')
-                    ]);
-                    setData({
-                        recentBooks: recent.data,
-                        bookshelf: (history.data || []).filter(h => h && !h.return_date)
-                    });
+                    const res = await api.get('/books/bookshelf');
+                    setBookshelf(res.data);
                 }
             } catch (err) {
-                console.error("Dashboard data fetch failed", err);
-                setErrorMsg(err.response?.data?.message || err.message || "Unknown error occurred");
+                console.error("Dashboard data load error", err);
             } finally {
                 setLoading(false);
             }
         };
-        fetchData();
+
+        if (user) {
+            fetchDashboardData();
+        }
     }, [user]);
 
-    if (loading) return <div className="loading">Initializing Dashboard...</div>;
-
-    if (!data && !loading) {
-        return (
-            <div style={{ padding: '2rem', textAlign: 'center', minHeight: '60vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                <div style={{ background: 'rgba(239, 68, 68, 0.1)', padding: '2rem', borderRadius: '24px', border: '1px solid rgba(239, 68, 68, 0.2)', maxWidth: '500px' }}>
-                    <AlertCircle size={48} color="var(--danger)" style={{ marginBottom: '1rem' }} />
-                    <h2 style={{ marginBottom: '0.5rem' }}>Dashboard Sync Failed</h2>
-                    <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
-                        {errorMsg || "We encountered an unexpected error while fetching your dashboard data."}
-                    </p>
-                    <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-                        <button onClick={() => window.location.reload()} className="btn-primary">Retry Sync</button>
-                        <Link to="/library/search" className="nav-link" style={{ border: '1px solid var(--glass-border)', borderRadius: '8px', padding: '8px 16px' }}>Go to Search</Link>
-                    </div>
-                </div>
-            </div>
-        );
+    if (loading) {
+        return <div className="loading">Loading dashboard...</div>;
     }
 
     return (
-        <div style={{ padding: '2rem' }}>
-            {user.is_admin ? (
-                <AdminDashboard stats={data} />
+        <div className="dashboard-page">
+            {user?.is_admin ? (
+                <AdminDashboard stats={stats || {}} />
             ) : (
-                <EmployeeDashboard user={user} recentBooks={data?.recentBooks || []} bookshelf={data?.bookshelf || []} />
+                <EmployeeDashboard user={user} bookshelf={bookshelf} />
             )}
 
             <style>{`
-                @keyframes flash {
-                    0% { opacity: 1; }
-                    50% { opacity: 0.5; }
-                    100% { opacity: 1; }
+                .dashboard-page {
+                    padding-bottom: 2rem;
                 }
-                .flash {
-                    animation: flash 1s infinite;
+
+                .dashboard-kpi-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 1rem;
+                    margin-bottom: 1.5rem;
+                }
+
+                .kpi-card {
+                    padding: 1.15rem 1.25rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                }
+
+                .kpi-icon-wrap {
+                    width: 44px;
+                    height: 44px;
+                    border-radius: 10px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-shrink: 0;
+                }
+
+                .kpi-data {
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                .kpi-label {
+                    font-size: 0.75rem;
+                    color: var(--text-muted);
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.04em;
+                }
+
+                .kpi-value {
+                    font-size: 1.6rem;
+                    font-weight: 800;
+                    color: var(--text-main);
+                    line-height: 1.2;
+                }
+
+                .dashboard-charts-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+                    gap: 1.25rem;
+                    margin-bottom: 2rem;
+                }
+
+                .chart-card {
+                    padding: 1.25rem;
+                }
+
+                .chart-wrapper {
+                    height: 260px;
+                    width: 100%;
+                }
+
+                .card-header {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    margin-bottom: 1rem;
+                }
+
+                .card-header h3 {
+                    font-size: 1.05rem;
+                    font-weight: 600;
+                }
+
+                .welcome-banner {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 1.75rem 2rem;
+                    margin-bottom: 1.5rem;
+                    gap: 1.25rem;
+                }
+
+                .welcome-info h1 {
+                    font-size: 1.85rem;
+                    margin-bottom: 0.25rem;
+                }
+
+                .welcome-info p {
+                    color: var(--text-muted);
+                    font-size: 0.9rem;
+                }
+
+                .insights-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    gap: 1.25rem;
+                    margin-bottom: 2rem;
+                }
+
+                .reading-goal-card, .quote-card {
+                    padding: 1.5rem;
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                .goal-counter {
+                    display: flex;
+                    align-items: baseline;
+                    gap: 0.4rem;
+                    margin-bottom: 0.75rem;
+                }
+
+                .goal-number {
+                    font-size: 2.4rem;
+                    font-weight: 800;
+                    color: var(--primary);
+                    line-height: 1;
+                }
+
+                .goal-total {
+                    font-size: 0.9rem;
+                    color: var(--text-muted);
+                    font-weight: 500;
+                }
+
+                .progress-bar-bg {
+                    width: 100%;
+                    height: 7px;
+                    background: rgba(255, 255, 255, 0.06);
+                    border-radius: var(--radius-full);
+                    margin-bottom: 0.75rem;
+                    overflow: hidden;
+                }
+
+                .progress-bar-fill {
+                    height: 100%;
+                    background: linear-gradient(90deg, #10b981 0%, #14b8a6 100%);
+                    border-radius: var(--radius-full);
+                    transition: width 0.8s ease-out;
+                }
+
+                .goal-status-text {
+                    font-size: 0.82rem;
+                    color: var(--text-muted);
+                    margin-top: auto;
+                }
+
+                .quote-text {
+                    font-style: italic;
+                    color: var(--text-main);
+                    font-size: 0.98rem;
+                    line-height: 1.45;
+                    margin-bottom: 0.35rem;
+                }
+
+                .quote-author {
+                    font-size: 0.82rem;
+                    color: var(--text-muted);
+                    margin-bottom: 1.25rem;
+                    display: block;
+                }
+
+                .category-chips {
+                    margin-top: auto;
+                }
+
+                .chips-label {
+                    display: block;
+                    font-size: 0.78rem;
+                    color: var(--text-dim);
+                    margin-bottom: 0.45rem;
+                }
+
+                .chips-list {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 0.35rem;
+                }
+
+                .category-chip {
+                    text-decoration: none;
+                    padding: 4px 10px;
+                    border-radius: var(--radius-full);
+                    font-size: 0.76rem;
+                    font-weight: 500;
+                    background: rgba(255, 255, 255, 0.04);
+                    border: 1px solid var(--glass-border);
+                    color: var(--text-main);
+                    transition: all 0.2s ease;
+                }
+
+                .category-chip:hover {
+                    background: rgba(16, 185, 129, 0.15);
+                    border-color: rgba(16, 185, 129, 0.3);
+                    color: var(--primary);
+                }
+
+                .bookshelf-section {
+                    margin-top: 0.5rem;
+                }
+
+                .section-title-row {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 1.25rem;
+                }
+
+                .books-count-badge {
+                    font-size: 0.75rem;
+                    font-weight: 600;
+                    padding: 3px 9px;
+                    background: rgba(255, 255, 255, 0.04);
+                    border: 1px solid var(--glass-border);
+                    border-radius: var(--radius-full);
+                    color: var(--text-muted);
+                }
+
+                .empty-state {
+                    text-align: center;
+                    padding: 3.5rem 1.5rem;
+                }
+
+                .empty-state h3 {
+                    font-size: 1.2rem;
+                    margin-bottom: 0.4rem;
+                }
+
+                .empty-state p {
+                    color: var(--text-muted);
+                    font-size: 0.9rem;
+                }
+
+                .bookshelf-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                    gap: 1.25rem;
+                    margin-bottom: 1.5rem;
+                }
+
+                .book-card {
+                    padding: 1rem;
+                    display: flex;
+                    flex-direction: column;
+                    position: relative;
+                }
+
+                .status-badge.overdue {
+                    position: absolute;
+                    top: 0.65rem;
+                    right: 0.65rem;
+                    background: rgba(239, 68, 68, 0.95);
+                    color: #ffffff;
+                    padding: 2px 7px;
+                    border-radius: 4px;
+                    font-size: 0.68rem;
+                    font-weight: 700;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 3px;
+                    z-index: 2;
+                }
+
+                .book-cover-wrap {
+                    height: 200px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin-bottom: 0.75rem;
+                    background: rgba(0, 0, 0, 0.25);
+                    border-radius: 6px;
+                    padding: 6px;
+                }
+
+                .book-cover-img {
+                    max-height: 100%;
+                    max-width: 100%;
+                    object-fit: contain;
+                    border-radius: 4px;
+                    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+                }
+
+                .book-title {
+                    font-size: 0.9rem;
+                    font-weight: 600;
+                    line-height: 1.3;
+                    margin-bottom: 0.25rem;
+                    overflow: hidden;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    min-height: 2.6em;
+                }
+
+                .book-author {
+                    font-size: 0.78rem;
+                    color: var(--text-muted);
+                    margin-bottom: 0.5rem;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .book-footer {
+                    margin-top: auto;
+                    padding-top: 0.6rem;
+                    border-top: 1px solid var(--glass-border);
+                }
+
+                .due-tag {
+                    font-size: 0.74rem;
+                    font-weight: 600;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 4px;
+                }
+
+                .due-tag.active {
+                    color: var(--warning);
+                }
+
+                .due-tag.overdue {
+                    color: var(--danger);
+                }
+
+                /* Mobile Optimizations */
+                @media (max-width: 768px) {
+                    .dashboard-kpi-grid {
+                        grid-template-columns: repeat(2, 1fr);
+                        gap: 0.75rem;
+                    }
+
+                    .kpi-card {
+                        padding: 0.85rem 1rem;
+                        gap: 0.75rem;
+                    }
+
+                    .kpi-icon-wrap {
+                        width: 36px;
+                        height: 36px;
+                        border-radius: 8px;
+                    }
+
+                    .kpi-value {
+                        font-size: 1.35rem;
+                    }
+
+                    .dashboard-charts-grid {
+                        grid-template-columns: 1fr;
+                        gap: 1rem;
+                    }
+
+                    .chart-wrapper {
+                        height: 220px;
+                    }
+
+                    .welcome-banner {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        padding: 1.25rem;
+                        gap: 1rem;
+                    }
+
+                    .welcome-info h1 {
+                        font-size: 1.45rem;
+                    }
+
+                    .browse-btn {
+                        width: 100%;
+                    }
+
+                    .insights-grid {
+                        grid-template-columns: 1fr;
+                        gap: 1rem;
+                    }
+
+                    .bookshelf-grid {
+                        grid-template-columns: repeat(2, 1fr);
+                        gap: 0.75rem;
+                    }
+
+                    .book-card {
+                        padding: 0.75rem;
+                    }
+
+                    .book-cover-wrap {
+                        height: 155px;
+                        margin-bottom: 0.5rem;
+                    }
+
+                    .book-title {
+                        font-size: 0.82rem;
+                    }
+
+                    .book-author {
+                        font-size: 0.74rem;
+                    }
+                }
+
+                @media (max-width: 380px) {
+                    .dashboard-kpi-grid {
+                        grid-template-columns: 1fr;
+                    }
+
+                    .bookshelf-grid {
+                        grid-template-columns: 1fr;
+                    }
+
+                    .book-cover-wrap {
+                        height: 180px;
+                    }
                 }
             `}</style>
         </div>

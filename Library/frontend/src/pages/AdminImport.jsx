@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import api from '../services/api';
-import { Search as SearchIcon, Import, CheckCircle, AlertCircle, Plus } from 'lucide-react';
+import { Search as SearchIcon, Import, CheckCircle, AlertCircle, Plus, Loader2 } from 'lucide-react';
 
 const AdminImport = () => {
     const [query, setQuery] = useState('');
@@ -16,10 +16,12 @@ const AdminImport = () => {
         setMessage({ text: '', type: '' });
         try {
             const res = await api.get('/books/search-global', { params: { q: query } });
-
             setResults(res.data || []);
+            if (!res.data || res.data.length === 0) {
+                setMessage({ text: 'No matching titles found on Google Books.', type: 'info' });
+            }
         } catch (err) {
-            setMessage({ text: 'Search failed', type: 'error' });
+            setMessage({ text: 'Search operation failed.', type: 'error' });
         } finally {
             setLoading(false);
         }
@@ -36,90 +38,190 @@ const AdminImport = () => {
                 description: book.description,
                 category: book.category
             });
-            setMessage({ text: `'${book.title}' added to library`, type: 'success' });
+            setMessage({ text: `"${book.title}" successfully added to inventory`, type: 'success' });
             setResults(results.map(b => b.isbn === book.isbn ? { ...b, in_library: true } : b));
         } catch (err) {
-            setMessage({ text: err.response?.data?.message || 'Import failed', type: 'error' });
+            setMessage({ text: err.response?.data?.message || 'Import operation failed', type: 'error' });
         } finally {
             setImporting(null);
         }
     };
 
     return (
-        <div className="animate-fade" style={{ padding: '2rem' }}>
-            <header style={{ marginBottom: '2rem' }}>
-                <h1 style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <Import size={32} color="var(--primary)" /> Smart Import
-                </h1>
-                <p style={{ color: 'var(--text-muted)' }}>Expand the catalog by fetching metadata from Google Books</p>
+        <div className="animate-fade admin-import-page" style={{ paddingBottom: '3rem' }}>
+            <header style={{ marginBottom: '1.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.25rem' }}>
+                    <Import size={26} color="var(--primary)" />
+                    <h1>Quick Catalog Intake</h1>
+                </div>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                    Rapidly intake books into the library repository by ISBN or title lookup
+                </p>
             </header>
 
-            <form onSubmit={handleSearch} style={{ display: 'flex', gap: '1rem', marginBottom: '3rem' }}>
-                <div style={{ position: 'relative', flex: 1 }}>
-                    <SearchIcon size={20} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+            <form onSubmit={handleSearch} className="import-search-form">
+                <div style={{ position: 'relative', flex: 1, minWidth: '220px' }}>
+                    <SearchIcon size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-dim)' }} />
                     <input
                         type="text"
                         className="input-field"
-                        style={{ paddingLeft: '3rem' }}
+                        style={{ paddingLeft: '40px' }}
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Search books to import..."
+                        placeholder="Search books by title, author, or ISBN..."
                     />
                 </div>
-                <button type="submit" className="btn-primary" disabled={loading}>
-                    {loading ? 'Searching...' : 'Search'}
+                <button type="submit" className="btn-primary search-import-btn" disabled={loading}>
+                    {loading ? <Loader2 size={16} className="spin" /> : 'Search Metadata'}
                 </button>
             </form>
 
             {message.text && (
-                <div className="glass-card" style={{
-                    padding: '1rem',
-                    marginBottom: '2rem',
+                <div style={{
+                    padding: '0.75rem 1.25rem',
+                    borderRadius: 'var(--radius-sm)',
+                    marginBottom: '1.25rem',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.75rem',
-                    borderColor: message.type === 'success' ? 'var(--success)' : 'var(--danger)',
-                    background: message.type === 'success' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'
+                    gap: '0.5rem',
+                    fontSize: '0.88rem',
+                    background: message.type === 'success' ? 'rgba(16, 185, 129, 0.12)' : (message.type === 'error' ? 'rgba(239, 68, 68, 0.12)' : 'rgba(20, 184, 166, 0.12)'),
+                    border: `1px solid ${message.type === 'success' ? 'rgba(16, 185, 129, 0.3)' : (message.type === 'error' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(20, 184, 166, 0.3)')}`,
+                    color: 'var(--text-main)'
                 }}>
-                    {message.type === 'success' ? <CheckCircle color="var(--success)" /> : <AlertCircle color="var(--danger)" />}
+                    {message.type === 'success' ? <CheckCircle size={16} color="var(--success)" /> : <AlertCircle size={16} color="var(--danger)" />}
                     <span>{message.text}</span>
                 </div>
             )}
 
-            <div className="responsive-grid" style={{ display: 'grid', gap: '1rem' }}>
+            <div className="import-results-list">
                 {results.map((book, idx) => (
-                    <div key={idx} className="glass-card" style={{ padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                    <div key={idx} className="glass-card import-item-card hover-lift">
                         <img
-                            src={book.cover_url || 'https://via.placeholder.com/60x90?text=No+Cover'}
+                            src={book.cover_url || 'https://placehold.co/60x90/1e2634/94a3b8?text=Book'}
                             alt={book.title}
-                            style={{ width: '60px', borderRadius: '4px' }}
+                            className="import-item-img"
                             onError={(e) => {
                                 e.target.onerror = null;
-                                e.target.src = "https://placehold.co/60x90/334155/f8fafc?text=Book";
+                                e.target.src = "https://placehold.co/60x90/1e2634/94a3b8?text=Book";
                             }}
                         />
-                        <div style={{ flex: 1 }}>
-                            <h4 style={{ marginBottom: '0.25rem' }}>{book.title}</h4>
-                            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{book.author} • ISBN: {book.isbn || 'N/A'}</p>
+                        <div className="import-item-details">
+                            <h4 className="import-item-title">{book.title}</h4>
+                            <p className="import-item-meta">
+                                {book.author || 'Author Unspecified'} &bull; ISBN: <span style={{ fontFamily: 'monospace' }}>{book.isbn || 'N/A'}</span>
+                            </p>
                         </div>
 
-                        {book.in_library ? (
-                            <div style={{ color: 'var(--success)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 500 }}>
-                                <CheckCircle size={18} /> In Library
-                            </div>
-                        ) : (
-                            <button
-                                onClick={() => handleImport(book)}
-                                className="btn-primary"
-                                style={{ padding: '8px 20px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-                                disabled={importing === book.isbn}
-                            >
-                                {importing === book.isbn ? 'Scaling...' : <><Plus size={18} /> Add to Library</>}
-                            </button>
-                        )}
+                        <div className="import-item-action">
+                            {book.in_library ? (
+                                <div style={{ color: 'var(--success)', display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.82rem', fontWeight: 600 }}>
+                                    <CheckCircle size={15} /> In Library
+                                </div>
+                            ) : (
+                                <button
+                                    onClick={() => handleImport(book)}
+                                    className="btn-primary import-btn"
+                                    disabled={importing === book.isbn}
+                                >
+                                    {importing === book.isbn ? 'Importing...' : <><Plus size={15} /> Add to Library</>}
+                                </button>
+                            )}
+                        </div>
                     </div>
                 ))}
             </div>
+
+            <style>{`
+                .import-search-form {
+                    display: flex;
+                    gap: 0.65rem;
+                    margin-bottom: 1.75rem;
+                    flex-wrap: wrap;
+                }
+
+                .import-results-list {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.75rem;
+                }
+
+                .import-item-card {
+                    padding: 1rem 1.25rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 1.25rem;
+                }
+
+                .import-item-img {
+                    width: 48px;
+                    height: 70px;
+                    object-fit: cover;
+                    border-radius: 4px;
+                    flex-shrink: 0;
+                }
+
+                .import-item-details {
+                    flex: 1;
+                    min-width: 180px;
+                }
+
+                .import-item-title {
+                    font-size: 0.94rem;
+                    font-weight: 600;
+                    margin-bottom: 0.25rem;
+                    line-height: 1.3;
+                }
+
+                .import-item-meta {
+                    font-size: 0.8rem;
+                    color: var(--text-muted);
+                }
+
+                .import-item-action {
+                    flex-shrink: 0;
+                }
+
+                .import-btn {
+                    padding: 8px 16px;
+                    font-size: 0.82rem;
+                }
+
+                @media (max-width: 640px) {
+                    .import-search-form {
+                        flex-direction: column;
+                    }
+
+                    .search-import-btn {
+                        width: 100%;
+                    }
+
+                    .import-item-card {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        padding: 0.9rem;
+                        gap: 0.75rem;
+                    }
+
+                    .import-item-img {
+                        width: 50px;
+                        height: 72px;
+                    }
+
+                    .import-item-details {
+                        width: 100%;
+                    }
+
+                    .import-item-action {
+                        width: 100%;
+                    }
+
+                    .import-btn {
+                        width: 100%;
+                        justify-content: center;
+                    }
+                }
+            `}</style>
         </div>
     );
 };

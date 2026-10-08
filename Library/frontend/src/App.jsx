@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BookMarked } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -38,7 +39,7 @@ function App() {
     fetchUser();
   }, []);
 
-  if (loading) return <div className="loading">Loading...</div>;
+  if (loading) return <div className="loading">Initializing BookHive...</div>;
 
   return (
     <Router>
@@ -71,20 +72,21 @@ function App() {
         {/* Footer */}
         {user && (
           <footer style={{
-            padding: '2rem',
+            padding: '2.5rem 1.5rem',
             textAlign: 'center',
             borderTop: '1px solid var(--glass-border)',
-            background: 'var(--glass)',
+            background: 'rgba(10, 14, 20, 0.75)',
+            backdropFilter: 'blur(10px)',
             marginTop: 'auto'
           }}>
-            <div style={{ marginBottom: '0.5rem' }}>
-              <span style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '1.2rem' }}>📚 BookHive</span>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+              <BookMarked size={18} color="var(--primary)" />
+              <span style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '1.1rem', letterSpacing: '-0.01em' }}>
+                BookHive
+              </span>
             </div>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: 0 }}>
-              © {new Date().getFullYear()} BookHive. All Rights Reserved.
-            </p>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '0.5rem' }}>
-              Smart Library Management System
+              Smart Enterprise Library Management System &copy; {new Date().getFullYear()} BookHive.
             </p>
           </footer>
         )}
