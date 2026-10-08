@@ -374,7 +374,7 @@ const Search = () => {
 
                 .books-grid {
                     display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                    grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
                     gap: 1.25rem;
                     margin-bottom: 1.5rem;
                 }
@@ -383,6 +383,7 @@ const Search = () => {
                     padding: 1.15rem;
                     display: flex;
                     flex-direction: column;
+                    min-width: 0;
                 }
 
                 .book-cover-container {
@@ -423,6 +424,7 @@ const Search = () => {
                     font-weight: 600;
                     line-height: 1.35;
                     margin-bottom: 0.25rem;
+                    overflow-wrap: anywhere;
                     overflow: hidden;
                     display: -webkit-box;
                     -webkit-line-clamp: 2;
@@ -522,7 +524,7 @@ const Search = () => {
                     }
 
                     .books-grid {
-                        grid-template-columns: repeat(2, 1fr);
+                        grid-template-columns: repeat(2, minmax(0, 1fr));
                         gap: 0.75rem;
                     }
 
@@ -555,7 +557,7 @@ const Search = () => {
 
                 @media (max-width: 520px) {
                     .books-grid {
-                        grid-template-columns: 1fr;
+                        grid-template-columns: minmax(0, 1fr);
                     }
 
                     .book-cover-container {

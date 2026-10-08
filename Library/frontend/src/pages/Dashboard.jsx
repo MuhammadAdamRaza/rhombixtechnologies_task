@@ -544,7 +544,7 @@ const Dashboard = ({ user }) => {
 
                 .bookshelf-grid {
                     display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                    grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr));
                     gap: 1.25rem;
                     margin-bottom: 1.5rem;
                 }
@@ -554,6 +554,7 @@ const Dashboard = ({ user }) => {
                     display: flex;
                     flex-direction: column;
                     position: relative;
+                    min-width: 0;
                 }
 
                 .status-badge.overdue {
@@ -596,6 +597,7 @@ const Dashboard = ({ user }) => {
                     font-weight: 600;
                     line-height: 1.3;
                     margin-bottom: 0.25rem;
+                    overflow-wrap: anywhere;
                     overflow: hidden;
                     display: -webkit-box;
                     -webkit-line-clamp: 2;
@@ -686,7 +688,7 @@ const Dashboard = ({ user }) => {
                     }
 
                     .bookshelf-grid {
-                        grid-template-columns: repeat(2, 1fr);
+                        grid-template-columns: repeat(2, minmax(0, 1fr));
                         gap: 0.75rem;
                     }
 
@@ -714,7 +716,7 @@ const Dashboard = ({ user }) => {
                     }
 
                     .bookshelf-grid {
-                        grid-template-columns: 1fr;
+                        grid-template-columns: minmax(0, 1fr);
                     }
 
                     .book-cover-wrap {

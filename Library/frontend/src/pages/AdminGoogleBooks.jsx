@@ -277,7 +277,7 @@ const AdminGoogleBooks = () => {
 
                 .google-books-grid {
                     display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                    grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
                     gap: 1.25rem;
                     margin-bottom: 2rem;
                 }
@@ -286,6 +286,7 @@ const AdminGoogleBooks = () => {
                     padding: 1rem;
                     display: flex;
                     flex-direction: column;
+                    min-width: 0;
                 }
 
                 .google-cover-wrap {
@@ -312,6 +313,7 @@ const AdminGoogleBooks = () => {
                     font-weight: 600;
                     line-height: 1.35;
                     margin-bottom: 0.25rem;
+                    overflow-wrap: anywhere;
                     overflow: hidden;
                     display: -webkit-box;
                     -webkit-line-clamp: 2;
@@ -344,7 +346,7 @@ const AdminGoogleBooks = () => {
                     }
 
                     .google-books-grid {
-                        grid-template-columns: repeat(2, 1fr);
+                        grid-template-columns: repeat(2, minmax(0, 1fr));
                         gap: 0.75rem;
                     }
 
@@ -368,7 +370,7 @@ const AdminGoogleBooks = () => {
 
                 @media (max-width: 520px) {
                     .google-books-grid {
-                        grid-template-columns: 1fr;
+                        grid-template-columns: minmax(0, 1fr);
                     }
 
                     .google-cover-wrap {
